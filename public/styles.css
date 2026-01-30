@@ -75,6 +75,69 @@ body {
   resize: vertical;
 }
 
+.options-details {
+  margin-top: 0.75rem;
+  font-size: 0.9rem;
+}
+
+.options-details summary {
+  cursor: pointer;
+  color: var(--text-muted);
+  user-select: none;
+}
+
+.options-details summary:hover {
+  color: var(--text);
+}
+
+.options-fields {
+  margin-top: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  max-width: 400px;
+}
+
+.option-row label,
+.option-row-inline label {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-bottom: 0.2rem;
+}
+
+.option-row-inline {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 0.75rem;
+}
+
+.option-row-inline select {
+  width: auto;
+  min-width: 120px;
+}
+
+.option-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin: 0;
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+
+.option-checkbox input {
+  width: auto;
+}
+
+.socket-id {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  font-family: monospace;
+  margin-left: 0.5rem;
+}
+
 .status {
   padding: 0.25rem 0.5rem;
   border-radius: 4px;

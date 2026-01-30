@@ -4,6 +4,7 @@
   const connectBtn = document.getElementById('connect');
   const disconnectBtn = document.getElementById('disconnect');
   const statusEl = document.getElementById('status');
+  const socketIdEl = document.getElementById('socketId');
   const userCountEl = document.getElementById('userCount');
   const roomNameInput = document.getElementById('roomName');
   const joinRoomBtn = document.getElementById('joinRoom');
@@ -21,6 +22,10 @@
   const templateChatBtn = document.getElementById('templateChat');
   const templatePingBtn = document.getElementById('templatePing');
   const templateCustomBtn = document.getElementById('templateCustom');
+  const queryInput = document.getElementById('query');
+  const namespaceInput = document.getElementById('namespace');
+  const transportsSelect = document.getElementById('transports');
+  const reconnectCheckbox = document.getElementById('reconnect');
 
   let socket = null;
   let myRooms = new Set();
@@ -28,9 +33,12 @@
   let logPaused = false;
 
   function getServerUrl() {
-    const v = (urlInput.value || '').trim();
-    if (v) return v;
-    return window.location.origin;
+    return (urlInput.value || '').trim();
+  }
+
+  function updateConnectButton() {
+    if (socket && socket.connected) return;
+    connectBtn.disabled = getServerUrl().length === 0;
   }
 
   function getAuth() {
@@ -44,14 +52,46 @@
     }
   }
 
-  function setConnected(connected) {
-    connectBtn.disabled = connected;
+  function getQuery() {
+    const s = (queryInput && queryInput.value ? queryInput.value : '').trim();
+    if (!s) return {};
+    try {
+      const parsed = JSON.parse(s);
+      return typeof parsed === 'object' && parsed !== null ? parsed : {};
+    } catch (_) {
+      return {};
+    }
+  }
+
+  function getNamespace() {
+    const s = (namespaceInput && namespaceInput.value ? namespaceInput.value : '').trim();
+    if (!s) return '';
+    return s.startsWith('/') ? s : '/' + s;
+  }
+
+  function getTransports() {
+    const v = transportsSelect ? transportsSelect.value : 'default';
+    if (v === 'websocket') return ['websocket'];
+    if (v === 'polling') return ['polling'];
+    return ['websocket', 'polling'];
+  }
+
+  function getReconnection() {
+    return reconnectCheckbox ? reconnectCheckbox.checked : true;
+  }
+
+  function setConnected(connected, socketId) {
+    connectBtn.disabled = connected ? true : getServerUrl().length === 0;
     disconnectBtn.disabled = !connected;
     sendBtn.disabled = !connected;
     statusEl.textContent = connected ? 'Connected' : 'Disconnected';
     statusEl.className = 'status ' + (connected ? 'connected' : 'disconnected');
+    if (socketIdEl) {
+      socketIdEl.textContent = connected && socketId ? 'ID: ' + socketId : '';
+      socketIdEl.title = socketId ? 'Socket ID (copy)' : '';
+    }
     if (!connected) {
-      userCountEl.textContent = '';
+      if (userCountEl) userCountEl.textContent = '';
       myRooms.clear();
       renderMyRooms();
       renderRoomsList();
@@ -117,25 +157,32 @@
         .join('');
   }
 
+  urlInput.addEventListener('input', updateConnectButton);
+  urlInput.addEventListener('change', updateConnectButton);
+
   connectBtn.addEventListener('click', function () {
-    const serverUrl = getServerUrl();
+    let serverUrl = getServerUrl();
+    if (!serverUrl) return;
+    const ns = getNamespace();
+    if (ns) serverUrl = serverUrl.replace(/\/$/, '') + ns;
     if (socket) {
       socket.disconnect();
       socket = null;
     }
     socket = io(serverUrl, {
       auth: getAuth(),
-      transports: ['websocket', 'polling'],
-      reconnection: true,
+      query: getQuery(),
+      transports: getTransports(),
+      reconnection: getReconnection(),
     });
 
     socket.on('connect', function () {
-      setConnected(true);
+      setConnected(true, socket.id);
       addLogEntry({ event: 'connect', payload: { id: socket.id }, ts: Date.now(), out: false });
     });
 
     socket.on('disconnect', function (reason) {
-      setConnected(false);
+      setConnected(false, null);
       addLogEntry({
         event: 'disconnect',
         payload: { reason },
@@ -201,7 +248,7 @@
       socket.disconnect();
       socket = null;
     }
-    setConnected(false);
+    setConnected(false, null);
   });
 
   joinRoomBtn.addEventListener('click', function () {
@@ -301,8 +348,5 @@
     payloadInput.value = templates.custom.payload;
   });
 
-  // Optional: connect on load if same origin
-  if (window.location.port === '3000' || window.location.port === '') {
-    connectBtn.click();
-  }
+  updateConnectButton();
 })();

@@ -11,16 +11,42 @@
     <header class="header">
       <h1>Socket.IO Playground</h1>
       <div class="connection-bar">
-        <input type="text" id="url" value="" placeholder="Server URL (leave empty for same host)" />
-        <button type="button" id="connect" class="btn btn-primary">Connect</button>
+        <input type="text" id="url" value="" placeholder="Server URL (e.g. http://localhost:3000)" />
+        <button type="button" id="connect" class="btn btn-primary" disabled>Connect</button>
         <button type="button" id="disconnect" class="btn btn-secondary" disabled>Disconnect</button>
         <span id="status" class="status disconnected">Disconnected</span>
+        <span id="socketId" class="socket-id"></span>
         <span id="userCount" class="badge"></span>
       </div>
       <div class="auth-bar">
         <label for="auth">Auth (JSON)</label>
         <textarea id="auth" rows="2" placeholder='{"token": "xxx", "userId": "123"}'></textarea>
       </div>
+      <details class="options-details">
+        <summary>Options</summary>
+        <div class="options-fields">
+          <div class="option-row">
+            <label for="query">Query (JSON)</label>
+            <input type="text" id="query" placeholder='{"ref": "dashboard"}' />
+          </div>
+          <div class="option-row">
+            <label for="namespace">Namespace</label>
+            <input type="text" id="namespace" placeholder="/ or leave empty" />
+          </div>
+          <div class="option-row option-row-inline">
+            <label for="transports">Transport</label>
+            <select id="transports">
+              <option value="default">Default</option>
+              <option value="websocket">WebSocket only</option>
+              <option value="polling">Polling only</option>
+            </select>
+            <label class="option-checkbox">
+              <input type="checkbox" id="reconnect" checked />
+              Reconnect
+            </label>
+          </div>
+        </div>
+      </details>
     </header>
 
     <main class="main">
