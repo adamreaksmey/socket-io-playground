@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Socket.IO Playground</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app">
+    <header class="header">
+      <h1>Socket.IO Playground</h1>
+      <div class="connection-bar">
+        <input type="text" id="url" value="" placeholder="Server URL (leave empty for same host)" />
+        <button type="button" id="connect" class="btn btn-primary">Connect</button>
+        <button type="button" id="disconnect" class="btn btn-secondary" disabled>Disconnect</button>
+        <span id="status" class="status disconnected">Disconnected</span>
+        <span id="userCount" class="badge"></span>
+      </div>
+      <div class="auth-bar">
+        <label for="auth">Auth (JSON)</label>
+        <textarea id="auth" rows="2" placeholder='{"token": "xxx", "userId": "123"}'></textarea>
+      </div>
+    </header>
+
+    <main class="main">
+      <section class="panel rooms-panel">
+        <h2>Rooms</h2>
+        <div class="room-controls">
+          <input type="text" id="roomName" placeholder="Room name" />
+          <button type="button" id="joinRoom" class="btn btn-sm">Join</button>
+          <button type="button" id="leaveRoom" class="btn btn-sm btn-secondary">Leave</button>
+        </div>
+        <div id="roomsList" class="rooms-list"></div>
+        <div id="myRooms" class="my-rooms"></div>
+      </section>
+
+      <section class="panel emit-panel">
+        <h2>Emit Event</h2>
+        <div class="event-row">
+          <label>Event name</label>
+          <input type="text" id="eventName" value="message" placeholder="e.g. message, chat, custom" />
+        </div>
+        <div class="event-row">
+          <label>Payload (JSON)</label>
+          <textarea id="payload" rows="4" placeholder='{"text": "Hello"}'></textarea>
+          <div class="payload-actions">
+            <button type="button" id="templateChat" class="btn btn-sm">Chat</button>
+            <button type="button" id="templatePing" class="btn btn-sm">Ping</button>
+            <button type="button" id="templateCustom" class="btn btn-sm">Custom</button>
+          </div>
+        </div>
+        <div class="event-row target-row">
+          <label>Target</label>
+          <select id="targetType">
+            <option value="broadcast">Broadcast (all)</option>
+            <option value="room">Room</option>
+          </select>
+          <input type="text" id="targetRoom" placeholder="Room name (if Room)" class="target-room" />
+        </div>
+        <button type="button" id="send" class="btn btn-primary btn-send" disabled>Send Event</button>
+      </section>
+
+      <section class="panel log-panel">
+        <div class="log-header">
+          <h2>Event Log</h2>
+          <button type="button" id="clearLog" class="btn btn-sm">Clear</button>
+          <label class="toggle">
+            <input type="checkbox" id="pauseLog" />
+            Pause
+          </label>
+        </div>
+        <div id="eventLog" class="event-log"></div>
+      </section>
+    </main>
+  </div>
+  <!-- Load from server so version matches and works offline when server is running -->
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
