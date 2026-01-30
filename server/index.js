@@ -8,7 +8,7 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
   cors: { origin: '*' },
-  pingInterval: 25000,
+  pingInterval: 25001,
   pingTimeout: 20000,
 });
 
@@ -84,7 +84,7 @@ function attachNamespace(nsp) {
 attachNamespace(io);
 attachNamespace(io.of('/chat'));
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 5001;
 server.listen(PORT, () => {
   console.log(`Socket.IO playground: http://localhost:${PORT}`);
 });

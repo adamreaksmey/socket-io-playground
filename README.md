@@ -9,7 +9,7 @@ npm install
 npm start
 ```
 
-Enter **http://localhost:3000** in the playground URL field and click **Connect**.
+Enter **http://localhost:5001** in the playground URL field and click **Connect**.
 
 ## Deploy to GitHub Pages
 
